@@ -27,14 +27,14 @@ namespace NewMyProject.Controllers
         }
 
         [HttpGet("QueryAllProducts")]
-        public List<Product> QueryGetAll(
+        public async Task<List<Product>> QueryGetAll(
                  [FromQuery(Name = "search")] string? search,
                  [FromQuery(Name = "sort")] string? sort,
                  [FromQuery(Name = "direction")] string? direction,
                  [FromQuery(Name = "category")] int? category)
         {
-            return _service.QueryGetAllProducts(search, sort, 
-                                        direction, category).ToList();
+            return await _service.QueryGetAllProducts(search, sort,
+                                        direction, category);
         }
 
         

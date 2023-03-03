@@ -7,6 +7,7 @@ using NewMyProject.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace NewMyProject.Test
@@ -46,38 +47,38 @@ namespace NewMyProject.Test
         }
 
         [Fact]
-        public  void RefreshToken_GenerateRefreshToken_ReturnsRowDataAsync()
+        public async Task RefreshToken_GenerateRefreshToken_ReturnsRowDataAsync()
         {
             var optionValue = _config.GetSection("Jwt").Get<JwtConfig>();
             var options = Options.Create<JwtConfig>(optionValue);
             var service = new TokenService(options, _context);
 
-            var refreshtoken = service.GenerateRefreshToken();
+            var refreshtoken = await service.GenerateRefreshToken();
 
             Assert.NotNull(refreshtoken);
         }
 
         [Fact]
-        public void AccessToken_GenerateAccessToken_ReturnsRowDataAsync()
+        public async Task AccessToken_GenerateAccessToken_ReturnsRowDataAsync()
         {
             var optionValue = _config.GetSection("Jwt").Get<JwtConfig>();
             var options = Options.Create<JwtConfig>(optionValue);
             var service = new TokenService(options, _context);
 
-            var accestoken = service.GenerateAccessToken(_userClaims);
+            var accestoken = await service.GenerateAccessToken(_userClaims);
 
             Assert.NotNull(accestoken);
         }
 
         [Fact]
-        public void NewAccessToken_GetNewAccessTokenWhenItExpired_ReturnsRowDataAsync()
+        public async Task NewAccessToken_GetNewAccessTokenWhenItExpired_ReturnsRowDataAsync()
         {
             var optionValue = _config.GetSection("Jwt").Get<JwtConfig>();
             var options = Options.Create<JwtConfig>(optionValue);
             var service = new TokenService(options, _context);
 
-            var accestoken = service.GenerateAccessToken(_userClaims);
-            var refreshtoken = service.GenerateRefreshToken();
+            var accestoken = await service.GenerateAccessToken(_userClaims);
+            var refreshtoken = await service.GenerateRefreshToken();
             var token = service.GetNewAccessTokenWhenItExpired(accestoken, 
                                                                refreshtoken);
 
@@ -85,26 +86,26 @@ namespace NewMyProject.Test
         }
 
         [Fact]
-        public void GetPrincipal_GetPrincipalFromExpiredToken_ReturnsRowDataAsync()
+        public async Task GetPrincipal_GetPrincipalFromExpiredToken_ReturnsRowDataAsync()
         {
             var optionValue = _config.GetSection("Jwt").Get<JwtConfig>();
             var options = Options.Create<JwtConfig>(optionValue);
             var service = new TokenService(options, _context);
 
-            var accestoken = service.GenerateAccessToken(_userClaims);
+            var accestoken = await service.GenerateAccessToken(_userClaims);
             var token = service.GetPrincipalFromExpiredToken(accestoken);
 
             Assert.NotNull(token);
         }
 
         [Fact]
-        public void RevokeToken_RevokeRefreshToken_ReturnsRowDataAsync()
+        public async Task RevokeToken_RevokeRefreshToken_ReturnsRowDataAsync()
         {
             var optionValue = _config.GetSection("Jwt").Get<JwtConfig>();
             var options = Options.Create<JwtConfig>(optionValue);
             var service = new TokenService(options, _context);
 
-            var token = service.RevokeToken(_user.UserName);
+            var token = await service.RevokeToken(_user.UserName);
 
             var updtoken = _context.LoginModels.FirstOrDefault(x => 
                                        x.RefreshToken == _user.RefreshToken);

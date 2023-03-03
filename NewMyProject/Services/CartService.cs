@@ -85,9 +85,9 @@ namespace NewMyProject.Services
                               let products = items.Product
                               let weights = items.Weight
                               let types = items.Type
-                              select new { items, products, 
-                                           weights, types, orders }).ToList();
+                              select new{items, products, weights, types, orders});
 
+            OrderItems.ToList();
             return _context.Orders.Where(x => 
                                          x.ProfileId.ToString() == profileId).ToList();
         }
@@ -250,7 +250,8 @@ namespace NewMyProject.Services
                              let weights = items.Weight
                              let types = items.Type
                              select new { products, weights, types, 
-                                          orders, items }).ToList();
+                                          orders, items });
+                Items.ToList();
 
                 var order = await _context.Orders.Where(x => x.Id == id)
                                                  .FirstOrDefaultAsync();

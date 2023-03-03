@@ -6,9 +6,9 @@ namespace NewMyProject.Services
 {
     public interface ITokenService
     {
-       public string GenerateAccessToken(IEnumerable<Claim> claims);
-       public string GenerateRefreshToken();
-       public ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
+       public Task<string> GenerateAccessToken(IEnumerable<Claim> claims);
+       public Task<string> GenerateRefreshToken();
+       public Task<ClaimsPrincipal> GetPrincipalFromExpiredToken(string token);
        public Task<ResponseStatus> RevokeToken(string UserName);
        public Task<TokenApiDto> GetNewAccessTokenWhenItExpired(string AccessToken, 
                                                                string RefreshToken);

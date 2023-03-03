@@ -9,7 +9,7 @@ namespace NewMyProject.Services
                                                  string ProfileName, 
                                                  string Password, 
                                                  string Email);
-        public User GetByUsername(string username);
+        public Task<User> GetByUsername(string username);
         public Task<TokenApiDto> Login(string UserName, 
                                        string Password);
         public Task<ResponseStatus> UpdateUserAndProfile(string id, 

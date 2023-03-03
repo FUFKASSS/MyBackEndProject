@@ -78,9 +78,9 @@ namespace NewMyProject.Services
         }
 
         
-        public User GetByUsername(string username)
+        public async Task<User> GetByUsername(string username)
         {
-            return _context.LoginModels.FirstOrDefault(u => 
+            return await _context.LoginModels.FirstOrDefaultAsync(u => 
                                         u.UserName == username);
         }
 
@@ -113,12 +113,12 @@ namespace NewMyProject.Services
             var refreshToken = _tokenService.GenerateRefreshToken();
             
             
-            user.RefreshToken = refreshToken; 
+            user.RefreshToken = await refreshToken; 
             user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
             
             await _context.SaveChangesAsync();
-            return new TokenApiDto { AccessToken = accessToken, 
-                                    RefreshToken = refreshToken };
+            return new TokenApiDto { AccessToken = await accessToken, 
+                                    RefreshToken = await refreshToken };
         }
 
         public async Task<ResponseStatus> UpdateUserAndProfile(string id, 

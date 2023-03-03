@@ -4,6 +4,7 @@ using NewMyProject.Entities;
 using NewMyProject.Services;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace NewMyProject.Test
@@ -132,7 +133,7 @@ namespace NewMyProject.Test
         }
 
         [Fact]
-        public async void UpdateProduct_UpdateProductWithTypesAndWeights_ReturnsRowDataAsync()
+        public async Task UpdateProduct_UpdateProductWithTypesAndWeights_ReturnsRowDataAsync()
         {
             var service = new ProductService(_context);
             var entity = new Product()
@@ -196,20 +197,20 @@ namespace NewMyProject.Test
             var updProduct = await service.GetProductById(12);
             var updWeight = _context.WeightProducts.Where(x => x.Id == 10)
                                                    .Select(x => x.Name)
-                                                   .FirstOrDefault();
+                                                   .FirstOrDefaultAsync();
 
             var updType = _context.TypeProducts.Where(x => x.Id == 10)
                                                .Select(x => x.Name)
-                                               .FirstOrDefault();
+                                               .FirstOrDefaultAsync();
 
             Assert.NotNull(crtproduct);
             Assert.NotEqual(productPrice, updProduct.Price);
-            Assert.NotEqual(updWeight, weight);
-            Assert.NotEqual(updType, type);
+            Assert.NotEqual(await updWeight, weight);
+            Assert.NotEqual(await updType, type);
         }
 
         [Fact]
-        public async void DeleteProduct_DeleteProductWithTypesAndWeights_ReturnsRowDataAsync()
+        public async Task DeleteProduct_DeleteProductWithTypesAndWeights_ReturnsRowDataAsync()
         {
             var service = new ProductService(_context);
             var entity = new Product

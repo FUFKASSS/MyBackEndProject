@@ -7,7 +7,7 @@ namespace NewMyProject.Services
     {
         public Task<Product> CreateProduct(Product product);
         public Task<Product> GetProductById(int Id);
-        public List<Product> QueryGetAllProducts(string? search, string? sort, 
+        public Task<List<Product>> QueryGetAllProducts(string? search, string? sort, 
                                          string? direction, int? category);
         public Task<ResponseStatus> UpdateProduct(int id, string title, 
                                                   string description, int category, 

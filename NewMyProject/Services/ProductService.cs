@@ -23,8 +23,9 @@ namespace NewMyProject.Services
 
         public async Task<Product> GetProductById(int Id)
         {
-            var productById = await _context.Products.Include(x => x.Types).Include(x => x.Weights).FirstOrDefaultAsync(x =>
-                                                                          x.Id == Id);
+            var productById = await _context.Products.Include(x => x.Types)
+                                                     .Include(x => x.Weights)
+                                                     .FirstOrDefaultAsync(x => x.Id == Id);
             if (productById == null)
             {
                 throw new Exception("Такого Id не существует");
@@ -35,16 +36,22 @@ namespace NewMyProject.Services
             }
         }
 
-        public List<Product> QueryGetAllProducts(string? search, string? sort, 
+        public async Task<List<Product>> QueryGetAllProducts(string? search, string? sort, 
                                                  string? direction, int? category)
         {
             var query = _context.Products.Include(x => x.Weights).Include(x => x.Types).AsSingleQuery();
+            if(search is null && sort is null && direction is null && category is null)
+            {
+                return await query.ToListAsync().ConfigureAwait(false);
+            }
+            else
+            {
+                query = setCategoryFilter(query, category);
+                query = setSortingStrategy(query, sort, direction);
+                query = setSearchCondition(query, search);
 
-            query = setCategoryFilter(query, category);
-            query = setSortingStrategy(query, sort, direction);
-            query = setSearchCondition(query, search);
-
-            return query.ToList();
+                return await query.ToListAsync().ConfigureAwait(false);
+            }
         }
 
         public async Task<ResponseStatus> DeleteProduct(int productId)

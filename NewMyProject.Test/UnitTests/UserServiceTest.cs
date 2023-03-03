@@ -4,6 +4,7 @@ using NewMyProject.Data;
 using NewMyProject.Entities;
 using NewMyProject.Services;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace NewMyProject.Test
@@ -39,17 +40,17 @@ namespace NewMyProject.Test
         }
 
         [Fact]
-        public async void GetAccount_GetAccountByUserName_ReturnsRowDataAsync()
+        public async Task GetAccount_GetAccountByUserName_ReturnsRowDataAsync()
         {
             var service = new UserService(_context, _tokenService.Object);
 
-            var GetUser = service.GetByUsername(_user1.UserName);
+            var GetUser = await service.GetByUsername(_user1.UserName);
 
             Assert.NotNull(GetUser);
         }
 
         [Fact]
-        public async void Register_CreateAccount_ReturnsRowDataAsync()
+        public async Task Register_CreateAccount_ReturnsRowDataAsync()
         {
             var service = new UserService(_context, _tokenService.Object);
             await service.RegisterUser(7987212352, 
@@ -70,7 +71,7 @@ namespace NewMyProject.Test
         }
 
         [Fact]
-        public async void UpdateAccount_UpdateUserAndProfile_ReturnsRowDataAsync()
+        public async Task UpdateAccount_UpdateUserAndProfile_ReturnsRowDataAsync()
         {
             var service = new UserService(_context, _tokenService.Object);
 
@@ -88,7 +89,7 @@ namespace NewMyProject.Test
         }
 
         [Fact]
-        public async void Login_LoginInAccount_ReturnsRowDataAsync()
+        public async Task Login_LoginInAccount_ReturnsRowDataAsync()
         {
 
             var service = new UserService(_context, _tokenService.Object);
@@ -98,7 +99,7 @@ namespace NewMyProject.Test
                                                       "Nicky12as3", 
                                                       "Nicky132@mail.ru");
 
-            var find = _context.LoginModels.FirstOrDefault(x => 
+            var find = await _context.LoginModels.FirstOrDefaultAsync(x => 
                                               x.PhoneNumber == 79872123512);
             var result = await service.Login("Nicky2as3", "Nicky12as3");
 

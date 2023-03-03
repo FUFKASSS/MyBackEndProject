@@ -27,7 +27,7 @@ namespace NewMyProject.Services
             return Encoding.UTF8.GetBytes(_jwtConfig.SecretKey);
         }
         
-        public string GenerateAccessToken(IEnumerable<Claim> claims)
+        public async Task<string> GenerateAccessToken(IEnumerable<Claim> claims)
         {
             var secretKey = new SymmetricSecurityKey(GetSecretKey());
             var signinCredentials = new SigningCredentials(secretKey, 
@@ -46,7 +46,7 @@ namespace NewMyProject.Services
         }
 
         
-        public string GenerateRefreshToken()
+        public async Task<string> GenerateRefreshToken()
         {
             var randomNumber = new byte[32];
             using (var rng = RandomNumberGenerator.Create())
@@ -82,9 +82,9 @@ namespace NewMyProject.Services
                                                                       string RefreshToken)
         {
 
-            var principal = GetPrincipalFromExpiredToken(AccessToken);
+            var principal = await GetPrincipalFromExpiredToken(AccessToken);
             
-            var username = principal.Identity.Name;
+            var username =  principal.Identity.Name;
             var user = _context.LoginModels.SingleOrDefault(u => u.UserName == username);
             if (user == null || user.RefreshToken != RefreshToken || 
                                                      user.RefreshTokenExpiryTime <= DateTime.Now)
@@ -101,7 +101,7 @@ namespace NewMyProject.Services
         }
 
         
-        public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+        public async Task<ClaimsPrincipal> GetPrincipalFromExpiredToken(string token)
         {
             var tokenValidationParameters = new TokenValidationParameters
             {

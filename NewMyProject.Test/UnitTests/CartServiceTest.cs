@@ -4,6 +4,7 @@ using NewMyProject.Entities;
 using NewMyProject.Services;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace NewMyProject.Test
@@ -106,7 +107,7 @@ namespace NewMyProject.Test
         }
 
         [Fact]
-        public async void AddToCart_AddItemToCart_ReturnsRowDataAsync()
+        public async Task AddToCart_AddItemToCart_ReturnsRowDataAsync()
         {
             var service = new CartService(_context);
             await service.AddToCart(_product1.Id, _weight1.Id, _type1.Id, 
@@ -117,7 +118,7 @@ namespace NewMyProject.Test
         }
 
         [Fact]
-        public async void DeleteFromCart_DeleteItemFromUserCart_ReturnsRowDataAsync()
+        public async Task DeleteFromCart_DeleteItemFromUserCart_ReturnsRowDataAsync()
         {
             var service = new CartService(_context);
             await service.DeleteFromCart(_product1.Id, _weight1.Id, _type1.Id, 
@@ -130,32 +131,32 @@ namespace NewMyProject.Test
         }
 
         [Fact]
-        public async void ChangeCartStatusFromAdmin_ChangeCartStatusToOrderStatus_ReturnsRowDataAsync()
+        public async Task ChangeCartStatusFromAdmin_ChangeCartStatusToOrderStatus_ReturnsRowDataAsync()
         {
             // default_item_status == 0
             var service = new CartService(_context);
-            var status =  _context.Orders.Where(x => x.ProfileId == 1)
+            var status =  (await _context.Orders.Where(x => x.ProfileId == 1)
                                          .Where(x => x.Status == (OrderStatus)0)
-                                         .FirstOrDefault().Status;
+                                         .FirstOrDefaultAsync()).Status;
 
             await service.ChangeCartStatusFromAdmin(1, 2);
-            var updstatus = _context.Orders.Where(x => x.ProfileId == 1)
+            var updstatus = (await _context.Orders.Where(x => x.ProfileId == 1)
                                            .Where(x => x.Status == (OrderStatus)2)
-                                           .FirstOrDefault().Status;
+                                           .FirstOrDefaultAsync()).Status;
 
             Assert.NotEqual(status, updstatus);
         }
 
         [Fact]
-        public async void DecrementAndIncrement_DecrementAndIncrementItemInCart_ReturnsRowData()
+        public async Task DecrementAndIncrement_DecrementAndIncrementItemInCart_ReturnsRowData()
         {
             // default_item_count == 2
             var service = new CartService(_context);
-            var count = _context.Items.FirstOrDefault(x => x.Count == _item1.Count).Count;
+            var count = (await _context.Items.FirstOrDefaultAsync(x => x.Count == _item1.Count)).Count;
             await service.IncrementItemInCart(_product1.Id, _weight1.Id, _type1.Id, _profile1.Id.ToString());
             await service.IncrementItemInCart(_product1.Id, _weight1.Id, _type1.Id, _profile1.Id.ToString());
             await service.DecrementItemInCart(_product1.Id, _weight1.Id, _type1.Id, _profile1.Id.ToString());
-            var updCount = _context.Items.FirstOrDefault(x => x.Count == 3).Count;
+            var updCount = (await _context.Items.FirstOrDefaultAsync(x => x.Count == 3)).Count;
             Assert.NotEqual(count, updCount);
         }
     }
