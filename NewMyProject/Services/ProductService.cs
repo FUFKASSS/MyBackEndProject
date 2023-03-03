@@ -36,15 +36,15 @@ namespace NewMyProject.Services
         }
 
         public List<Product> QueryGetAllProducts(string? search, string? sort, 
-                                         string? direction, int? category)
+                                                 string? direction, int? category)
         {
-            var query = _context.Products.Include(x => x.Weights).Include(x => x.Types).ToList();
+            var query = _context.Products.Include(x => x.Weights).Include(x => x.Types).AsSingleQuery();
 
             query = setCategoryFilter(query, category);
             query = setSortingStrategy(query, sort, direction);
             query = setSearchCondition(query, search);
 
-            return query;
+            return query.ToList();
         }
 
         public async Task<ResponseStatus> DeleteProduct(int productId)
@@ -124,15 +124,15 @@ namespace NewMyProject.Services
                 return new ResponseStatus { Status = ex.Message };
             }
         }
-        
-        private List<Product> setSearchCondition(List<Product> query, string? search)
+
+        private IQueryable<Product> setSearchCondition(IQueryable<Product> query, string? search)
         {
-            if (search == null) return query.ToList();
+            if (search == null) return query;
             return query.Where(p => p.Title.Contains(search) || 
-                               p.Description.Contains(search)).ToList();
+                               p.Description.Contains(search));
         }
 
-        private List<Product> setSortingStrategy(List<Product> query, string? sort, string? direction)
+        private IQueryable<Product> setSortingStrategy(IQueryable<Product> query, string? sort, string? direction)
         {
             if (sort != null)
             {
@@ -144,19 +144,19 @@ namespace NewMyProject.Services
                 }
             }
 
-            return query.ToList();
+            return query;
         }
 
-        private List<Product> setSortingKey(List<Product> query, Func<Product, object> callback, string? direction)
+        private IQueryable<Product> setSortingKey(IQueryable<Product> query, Func<Product, object> callback, string? direction)
         {
-            if (direction == "asc") return query.OrderBy(callback).ToList();
-            return query.OrderByDescending(callback).ToList();
+            if (direction == "asc") return (IQueryable<Product>)query.OrderBy(callback);
+            return (IQueryable<Product>)query.OrderByDescending(callback);
         }
 
-        private List<Product> setCategoryFilter(List<Product> query, int? category)
+        private IQueryable<Product> setCategoryFilter(IQueryable<Product> query, int? category)
         {
             if (category == null) return query;
-            return query.Where(x => x.Category == category).ToList();
+            return query.Where(x => x.Category == category);
         }
     }
 }
