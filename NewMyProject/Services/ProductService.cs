@@ -38,17 +38,7 @@ namespace NewMyProject.Services
         public List<Product> QueryGetAllProducts(string? search, string? sort, 
                                          string? direction, int? category)
         {
-            var types = (from products in _context.Products 
-                         from Weights in products.Weights 
-                         select Weights).ToList();
-
-            var weights = (from products in _context.Products 
-                           from Types in products.Types 
-                           select Types).ToList();
-
-            var query = (from products in _context.Products
-                         select products).ToList();
-
+            var query = _context.Products.Include(x => x.Weights).Include(x => x.Types).ToList();
 
             query = setCategoryFilter(query, category);
             query = setSortingStrategy(query, sort, direction);
